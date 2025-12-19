@@ -39,6 +39,8 @@ final class Elementor_DevKit {
         // Check php version
         // Check elementor installation
         // bring in the widgets classes
+        add_action( 'elementor/elements/categories_registered', [ $this, 'add_elementor_widget_categories' ] );
+        add_action( 'elementor/widgets/register', [ $this, 'init_widgets' ] );
         // bring in the controls
     }
 
@@ -46,8 +48,10 @@ final class Elementor_DevKit {
        
     }
 
-    private function init_widgets() {
-
+    public function init_widgets( $widgets_manager ) {
+        require_once( __DIR__ . '/widgets/nav-menu.php' );
+        
+        $widgets_manager->register( new \Nav_Menu() );
     }
 
     public static function get_instance() {
@@ -56,6 +60,16 @@ final class Elementor_DevKit {
         }
         self::$instance = new self();
         return self::$instance;
+    }
+
+    public function add_elementor_widget_categories( $elements_manager ) {
+	    $elements_manager->add_category(
+		    'devkit-elementor-widget',
+                [
+                    'title' => esc_html__( 'DevKit', 'devkit' ),
+                    'icon' => 'eicon-import-kit',
+                ]
+        );       
     }
 
 
