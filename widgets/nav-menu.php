@@ -1,5 +1,6 @@
 <?php
 
+use Elementor\Controls_Manager;
 use Elementor\Widget_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -24,6 +25,8 @@ class Nav_Menu extends Widget_Base {
 
 	public function __construct($data = [], $args = null) {
 		parent::__construct($data, $args);
+
+		$this->get_menus();
 
 		wp_enqueue_script('devKit-js-menu', plugin_dir_url( __FILE__ ) . '../assets/js/menu.js');
 		wp_enqueue_style('devKit-css-menu', plugin_dir_url( __FILE__ ) . '../assets/css/menu.css');
@@ -142,6 +145,23 @@ class Nav_Menu extends Widget_Base {
 		return false;
 	}
 
+	private function get_menus() {
+		$menus = wp_get_nav_menus();
+		
+		$menu_list = [];
+
+		foreach ($menus as $menu) {
+			$menu_list[$menu->slug] = $menu->name;
+		}
+
+		return $menu_list;
+	}
+
+	private function get_default_slug() {
+		$menus = $this->get_menus();
+		return key($menus);
+	}
+
 	/**
 	 * Register deVkit widget controls.
 	 *
@@ -152,6 +172,26 @@ class Nav_Menu extends Widget_Base {
 	 */
 	protected function register_controls(): void {
 
+		$this->start_controls_section(
+			'layout_section', 
+			[
+				'label' => esc_html__( 'Layout', 'devKit' ),
+				'tab' => Controls_Manager::TAB_CONTENT
+			]
+		);
+
+		$this->add_control(
+			'menu',
+			[
+				'label' => esc_html__( 'Menu', 'devKit' ),
+				'type' => Controls_Manager::SELECT,
+				'default' => $this->get_default_slug(),
+				'options' => $this->get_menus(),
+				'label_block' => false
+			]
+		);
+
+		$this->end_controls_section();
 		
 
 	}
@@ -165,8 +205,12 @@ class Nav_Menu extends Widget_Base {
 	 * @access protected
 	 */
 	protected function render(): void {
+
+		$settings = $this->get_settings_for_display();
+
 		echo wp_nav_menu(
 			[
+				'menu' => $settings['menu'],
 				'container_class' => 'devKit-menu-container',
 				'menu_class'      => 'devKit-menu'
 			]
@@ -175,7 +219,6 @@ class Nav_Menu extends Widget_Base {
 
     protected function content_template() {
         return parent::content_template();
-		// echo wp_nav_menu();
     }
 
 }
