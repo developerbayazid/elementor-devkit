@@ -1,0 +1,24 @@
+.devKit-menu-container {
+    background-color: blue;
+}
+
+.devKit-menu {
+    padding: 0;
+}
+
+.devKit-menu li {
+    display: inline-block;
+    margin: 0 20px;
+}
+
+.devKit-menu li:first-child {
+    margin-left: 0;
+}
+
+.devKit-menu li:last-child {
+    margin-right: 0;
+}
+
+.devKit-menu li a {
+    color: #fff;
+}

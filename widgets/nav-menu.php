@@ -21,6 +21,14 @@ class Nav_Menu extends Widget_Base {
 	 * @access public
 	 * @return string Widget name.
 	 */
+
+	public function __construct($data = [], $args = null) {
+		parent::__construct($data, $args);
+
+		wp_enqueue_script('devKit-js-menu', plugin_dir_url( __FILE__ ) . '../assets/js/menu.js');
+		wp_enqueue_style('devKit-css-menu', plugin_dir_url( __FILE__ ) . '../assets/css/menu.css');
+	}
+
 	public function get_name(): string {
 		return 'devkit-nav-menu';
 	}
@@ -91,6 +99,24 @@ class Nav_Menu extends Widget_Base {
 	}
 
 	/**
+	 * Script depends
+	 *
+	 * @return array
+	 */
+	public function get_script_depends(): array {
+		return ['devKit-js-menu'];
+	}
+
+	/**
+	 * Style depends
+	 *
+	 * @return array
+	 */
+	public function get_style_depends(): array {
+		return ['devKit-css-menu'];
+	}
+
+	/**
 	 * Whether the widget requires inner wrapper.
 	 *
 	 * Determine whether to optimize the DOM size.
@@ -139,11 +165,17 @@ class Nav_Menu extends Widget_Base {
 	 * @access protected
 	 */
 	protected function render(): void {
-		echo "<h2>Hello</h2>";
+		echo wp_nav_menu(
+			[
+				'container_class' => 'devKit-menu-container',
+				'menu_class'      => 'devKit-menu'
+			]
+		);
 	}
 
     protected function content_template() {
         return parent::content_template();
+		// echo wp_nav_menu();
     }
 
 }
