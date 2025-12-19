@@ -10,6 +10,10 @@
  * License URI:       http://www.gnu.org/licenses/gpl-2.0.txt
  * Text Domain:       devkit
  * 
+ * Requires Plugins: elementor
+ * Elementor tested up to: 3.25.0
+ * Elementor Pro tested up to: 3.25.0
+ * 
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -23,7 +27,7 @@ final class Elementor_DevKit {
     private static $instance;
 
     const VERSION = '1.0.0';
-    const ELEMENTOR_MINIMUM_VERSION = '3.0.0';
+    const ELEMENTOR_MINIMUM_VERSION = '3.25.0';
     const PHP_MINIMUM_VERSION = '7.0';
 
     private function __construct() {
@@ -36,8 +40,24 @@ final class Elementor_DevKit {
     }
 
     public function init_plugin() {
-        // Check php version
-        // Check elementor installation
+        // Check PHP version
+        if ( version_compare( PHP_VERSION, self::PHP_MINIMUM_VERSION, '<' ) ) {
+            add_action( 'admin_notices', [ $this, 'php_version_notice' ] );
+            return;
+        }
+        
+        // Check Elementor installed & activated
+        if ( ! did_action( 'elementor/loaded' ) ) {
+            add_action( 'admin_notices', [ $this, 'elementor_missing_notice' ] );
+            return;
+        }
+
+        // Check Elementor minimum version
+        if ( version_compare( ELEMENTOR_VERSION, self::ELEMENTOR_MINIMUM_VERSION, '<' ) ) {
+            add_action( 'admin_notices', [ $this, 'elementor_version_notice' ] );
+            return;
+        }
+
         // bring in the widgets classes
         add_action( 'elementor/elements/categories_registered', [ $this, 'add_elementor_widget_categories' ] );
         add_action( 'elementor/widgets/register', [ $this, 'init_widgets' ] );
@@ -71,6 +91,56 @@ final class Elementor_DevKit {
                 ]
         );       
     }
+
+    public function php_version_notice() {
+        ?>
+        <div class="notice notice-error">
+            <p>
+                <?php
+                printf(
+                    esc_html__(
+                        'Elementor DevKit requires PHP version %s or greater.',
+                        'devkit'
+                    ),
+                    self::PHP_MINIMUM_VERSION
+                );
+                ?>
+            </p>
+        </div>
+        <?php
+    }
+
+    public function elementor_missing_notice() {
+        ?>
+        <div class="notice notice-error">
+            <p>
+                <?php esc_html_e(
+                    'Elementor DevKit requires Elementor to be installed and activated.',
+                    'devkit'
+                ); ?>
+            </p>
+        </div>
+        <?php
+    }
+
+    public function elementor_version_notice() {
+        ?>
+        <div class="notice notice-error">
+            <p>
+                <?php
+                printf(
+                    esc_html__(
+                        'Elementor DevKit requires Elementor version %s or greater.',
+                        'devkit'
+                    ),
+                    self::ELEMENTOR_MINIMUM_VERSION
+                );
+                ?>
+            </p>
+        </div>
+        <?php
+    }
+
 
 
 }
