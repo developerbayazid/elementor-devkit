@@ -2,6 +2,14 @@
 
 use Elementor\Controls_Manager;
 use Elementor\Widget_Base;
+use Elementor\Group_Control_Typography;
+use Elementor\Group_Control_Text_Stroke;
+use Elementor\Group_Control_Text_Shadow;
+use Elementor\Group_Control_Box_Shadow;
+use Elementor\Group_Control_Border;
+use Elementor\Group_Control_Background;
+use Elementor\Group_Control_Image_Size;
+use Elementor\Group_Control_Css_Filter;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -191,6 +199,112 @@ class Nav_Menu extends Widget_Base {
 			]
 		);
 
+		$this->end_controls_section();
+
+
+		$this->start_controls_section(
+			'style_section',
+			[
+				'label' => esc_html__( 'Main Menu',  'devKit'  ),
+				'tab' => Controls_Manager::TAB_STYLE,
+			]
+		);
+
+		$this->add_control(
+			'menu_background_color',
+			[
+				'label' => esc_html__( 'Background Color', 'devKit' ),
+				'type' => Controls_Manager::COLOR,
+				'default' => '#0128B9',
+				'selectors' => [
+					'{{WRAPPER}} .devKit-menu' => 'background-color: {{VALUE}}',
+				],
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Typography::get_type(),
+			[
+				'name'     => 'menu_typography',
+				'label'    => esc_html__( 'Typography', 'devKit' ),
+				'selector' => '{{WRAPPER}} .devKit-menu li a',
+			]
+		);
+
+		$this->start_controls_tabs('menu_item_style');
+
+	
+		$this->start_controls_tab(
+			'menu_item_normal',
+			[
+				'label' => esc_html__('Normal', 'devKit')
+			]
+		);
+
+		$this->add_control(
+			'menu_color_normal',
+			[
+				'label' => esc_html__( 'Color', 'devKit' ),
+				'type' => Controls_Manager::COLOR,
+				'default' => '#ededed',
+				'selectors' => [
+					'{{WRAPPER}} .devKit-menu a' => 'color: {{VALUE}}',
+				],
+			]
+		);
+
+
+
+		$this->end_controls_tab();
+		$this->start_controls_tab(
+			'menu_item_hover',
+			[
+				'label' => esc_html__('Hover', 'devKit')
+			]
+		);
+
+		$this->add_control(
+			'menu_color_hover',
+			[
+				'label' => esc_html__( 'Color', 'devKit' ),
+				'type' => Controls_Manager::COLOR,
+				'default' => '#ededed',
+				'selectors' => [
+					'{{WRAPPER}} .devKit-menu a:hover' => 'color: {{VALUE}}',
+				],
+			]
+		);
+
+
+		
+		$this->end_controls_tab();
+		$this->start_controls_tab(
+			'menu_item_active',
+			[
+				'label' => esc_html__('Active', 'devKit')
+			]
+		);
+
+		$this->add_control(
+			'menu_color_active',
+			[
+				'label' => esc_html__( 'Color', 'devKit' ),
+				'type' => Controls_Manager::COLOR,
+				'default' => '#ededed',
+				'selectors' => [
+					'{{WRAPPER}} .devKit-menu .current-menu-item > a,
+					{{WRAPPER}} .devKit-menu .current-menu-ancestor > a,
+					{{WRAPPER}} .devKit-menu .current_page_item > a' => 'color: {{VALUE}}',
+				],
+			]
+		);
+
+
+
+
+		$this->end_controls_tab();
+
+		$this->end_controls_tab();
 		$this->end_controls_section();
 		
 
